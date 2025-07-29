@@ -714,14 +714,14 @@ function getSpCost(turn_data, skill_info, unit) {
     if (NON_ACTION_ATTRIBUTE.includes(skill_info.skill_attribute)) {
         return 0;
     }
-    let spCost = skill_info.sp_cost;
-    if (spCost == 0) {
-        return spCost;
+    let sp_cost = skill_info.sp_cost;
+    if (sp_cost == 0) {
+        return 0;
     }
-    let spCostDown = turn_data.sp_cost_down;
-    let spCostUp = 0;
+    let sp_cost_down = turn_data.sp_cost_down;
+    let sp_cost_up = 0;
     if (harfSpSkill(turn_data, skill_info, unit)) {
-        spCost = Math.ceil(spCost / 2);
+        sp_cost = Math.ceil(sp_cost / 2);
     }
     if (ZeroSpSkill(turn_data, skill_info, unit)) {
         return 0;
@@ -730,55 +730,53 @@ function getSpCost(turn_data, skill_info, unit) {
     if (turn_data.additional_turn) {
         // クイックリキャスト
         if (checkAbilityExist(unit[`ability_${ABILIRY_TIMING.OTHER}`], 1506)) {
-            spCostDown = 2;
+            sp_cost_down = 2;
         }
         // 優美なる剣舞
         if (checkAbilityExist(unit[`ability_${ABILIRY_TIMING.OTHER}`], 1512)) {
-            spCostDown = 2;
+            sp_cost_down = 2;
         }
         // 疾駆
         if (checkAbilityExist(unit[`ability_${ABILIRY_TIMING.OTHER}`], 1515)) {
-            spCostDown = 2;
+            sp_cost_down = 2;
         }
     }
     // オーバードライブ中
     if (turn_data.over_drive_max_turn > 0) {
         // 獅子に鰭
         if (checkAbilityExist(unit[`ability_${ABILIRY_TIMING.OTHER}`], 1521)) {
-            spCostDown = 2;
+            sp_cost_down = 2;
         }
         // 飛躍
         if (checkAbilityExist(unit[`ability_${ABILIRY_TIMING.OTHER}`], 1525)) {
-            spCostDown = 2;
+            sp_cost_down = 2;
         }
     }
     // 歌姫の加護
     if (checkBuffExist(unit.buff_list, BUFF_DIVA_BLESS)) {
         // 絶唱
         if (checkAbilityExist(unit[`ability_${ABILIRY_TIMING.OTHER}`], 1522)) {
-            spCostDown = 2;
+            sp_cost_down = 2;
         }
     }
     // ハイブースト
     if (checkBuffExist(unit.buff_list, BUFF.HIGH_BOOST)) {
-        spCostUp = 2;
+        sp_cost_up = 2;
     }
     // カラスの鳴き声で
     if (skill_info.skill_id == 578) {
         const count = unit.use_skill_list.filter(value => value === 578).length;
-        spCost = 8 + 4 * count;
-        spCost = spCost > 20 ? 20 : spCost;
+        sp_cost = 8 + 4 * count;
+        sp_cost = sp_cost > 20 ? 20 : sp_cost;
     }
     // SP全消費
-    if (spCost == 99) {
-        spCost = unit.sp + unit.over_drive_sp;
-        spCostDown = 0;
-        spCostUp = 0;
+    if (sp_cost == 99) {
+        sp_cost = unit.sp + unit.over_drive_sp;
+        sp_cost_down = 0;
+        sp_cost_up = 0;
     }
-    unit.spCostUp = spCostUp;
-    unit.spCostDown = spCostDown;
-    spCost += spCostUp - spCostDown;
-    return spCost < 0 ? 0 : spCost;
+    sp_cost += sp_cost_up - sp_cost_down;
+    return sp_cost < 0 ? 0 : sp_cost;
 }
 
 // 消費SP半減
